@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<metric-list>
+    <analyticsmetric>
+        <name>Simple Query</name>
+        <metric-path>name=Custom Metrics|AnalyticsQuery|BT Count (1h)</metric-path>
+        <query>SELECT count(transactionName) FROM transactions SINCE 1 hours</query>
+    </analyticsmetric>
+</metric-list>

@@ -1,0 +1,9 @@
+#events service information
+eventsEndpoint : https://analytics.api.appdynamics.com
+globalAccount : AccountName_xxxxxx-xxxxxx-xxxxxx-xxxxxx-xxxxxx
+apiAccessKey : xxxxxx-xxxxxx-xxxxxx-xxxxxx-xxxxxx
+
+#for complex queries, use HTTP mode to communicate with Machine Agent
+httpMode: false
+machineAgentIpAddress : 0.0.0.0
+machineAgentPort: 8787
