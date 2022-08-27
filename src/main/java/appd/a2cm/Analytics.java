@@ -14,6 +14,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
+import org.apache.log4j.Logger;
 import org.json.*;
 
 
@@ -25,6 +26,7 @@ public class Analytics {
     private String _account;
     private String _key;
 
+    static Logger log = Logger.getLogger(Analytics.class.getName()); 
 
     public Analytics(String _host , String _account , String _key){
         this._host = _host;
@@ -57,11 +59,12 @@ public class Analytics {
         return request (_account, _key, "POST", url, data);
     }
 
-    public String query (String queryBody) throws IOException,  NoSuchAlgorithmException
+    public String query (String queryBody)
     {
+        try {
         String postUrl = this._host + "/events/query";
         String result = new JSONArray(print(post (postUrl,  queryBody)) ).getJSONObject(0).get("results").toString().replaceAll("(\\[)|(\\])", "");
-
+        //log.debug("Http Request result: " + result);
         //In the case of an empty string , we need to return 0 as metric value.
         if (result.length() == 0) {
             result = "0";
@@ -80,6 +83,11 @@ public class Analytics {
         }
         
         return result;
+        
+        } catch (Exception ex) {
+            log.error("Http Request Exception: " + ex);
+            return "0";
+        }
     }
 
     /*
