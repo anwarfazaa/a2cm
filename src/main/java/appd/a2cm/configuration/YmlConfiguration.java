@@ -8,16 +8,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.apache.log4j.Logger;
 
 public class YmlConfiguration {
 
+    static Logger log = Logger.getLogger(YmlConfiguration.class.getName()); 
+    
     private ApplicationConfiguration applicationConfiguration;
 
-    public YmlConfiguration(String filePath) throws IOException {
+    public YmlConfiguration(String filePath) {
         Yaml yaml = new Yaml();
         try(InputStream in = Files.newInputStream(Paths.get(filePath))) {
             applicationConfiguration = yaml.loadAs(in , ApplicationConfiguration.class);
-            //System.out.println(applicationConfiguration.toString());
+            //log.debug("Yml Configuration: " + applicationConfiguration.toString());
+        } catch (Exception ex) {
+            log.error("Error loading Yml file: " + ex);
         }
 
     }
