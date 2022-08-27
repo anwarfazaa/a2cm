@@ -8,23 +8,32 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 public class XmlConfiguration {
 
+    static Logger log = Logger.getLogger(XmlConfiguration.class.getName());  
+    
     JAXBContext jaxbContext = null;
 
     List<AnalyticsMetric> analyticsMetricList;
-    public XmlConfiguration(String filePath) throws JAXBException {
+    public XmlConfiguration(String filePath) {
+        try {
+        
+            jaxbContext = JAXBContext.newInstance(Metrics.class);
 
-        jaxbContext = JAXBContext.newInstance(Metrics.class);
+            File file = new File(filePath);
+            //log.info("Loading Metrics List from: " + filePath);
 
-        File file = new File(filePath);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            Metrics o = (Metrics) jaxbUnmarshaller.unmarshal(file);
 
-        Metrics o = (Metrics) jaxbUnmarshaller.unmarshal(file);
-
-        this.analyticsMetricList =  o.getAnalyticsMetricList();
+            this.analyticsMetricList =  o.getAnalyticsMetricList();
+            
+        } catch (Exception ex) {
+            log.error(ex);
+        }
 
     }
 
