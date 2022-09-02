@@ -4,6 +4,7 @@ import appd.a2cm.Analytics;
 import appd.a2cm.MachineAgentHttpManager;
 import appd.a2cm.configuration.XmlConfiguration;
 import appd.a2cm.configuration.YmlConfiguration;
+import appd.a2cm.configuration.YmlMetricsConfiguration;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -26,13 +27,15 @@ public class Main {
         File file = new File(jarFile.getParent(), config);
         return file.getPath().replaceAll("%20*", " ");
     }
+    
+    
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, KeyManagementException, JAXBException, InterruptedException {
          BasicConfigurator.configure();
          
          
         YmlConfiguration applicationConfiguration = new YmlConfiguration(getConfig("app-config.yml"));
-        XmlConfiguration metricsConfiguration = new XmlConfiguration(getConfig("config.xml"));
+        YmlMetricsConfiguration ymlMetricsConfiguration = new YmlMetricsConfiguration(getConfig("metrics-config.yml"));
         Analytics analytics = new Analytics(applicationConfiguration.getEventsEndpoint(),applicationConfiguration.getGlobalAccount(),applicationConfiguration.getApiAccessKey());
 
         // measure execution time
@@ -42,26 +45,20 @@ public class Main {
         int metricsCount = 0;
         List<String> metricsList = new ArrayList<String>();
         
-        RunnableHttpRequests R1 = new RunnableHttpRequests(1,metricsConfiguration,analytics);
-        RunnableHttpRequests R2 = new RunnableHttpRequests(2,metricsConfiguration,analytics);
+        RunnableHttpRequests R1 = new RunnableHttpRequests(1,ymlMetricsConfiguration,analytics);
+        RunnableHttpRequests R2 = new RunnableHttpRequests(2,ymlMetricsConfiguration,analytics);
         
-        if (!applicationConfiguration.getHttpMode()) {
-            //for (metricsCount = 0; metricsCount < metricsConfiguration.getAnalyticsMetricList().size(); metricsCount++) {
-            //    metricsList.add(metricsConfiguration.getAnalyticsMetricList().get(metricsCount).getMetricPath() + ", value=" + analytics.query(metricsConfiguration.getAnalyticsMetricList().get(metricsCount).getQuery()));
-            //}
 
-            R1.start();
-            R2.start();
+        //Starting threads
+        R1.start();
+        R2.start();
              
-        }
-        
-        //adding 1 to metric count to give proper count
-        metricsCount++;
+
         
         //execution time end - need to convert it to metric
         boolean threadState = true;
         
-        //make sure thread state is okay
+        //make sure if threads are alive before giving final statistics
         while (R1.t.isAlive() || R2.t.isAlive()) {
             sleep(100);  
         }
