@@ -1,0 +1,7 @@
+#Using yml to configure metrics to avoid character issues in xml
+listOfMetrics:
+ - name: "Simple Query"
+   metric-path: "name=Custom Metrics|AnalyticsQuery|BT Count (1h)"
+   query: "SELECT count(transactionName) FROM transactions SINCE 1 hours"
+
+
