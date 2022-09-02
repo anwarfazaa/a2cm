@@ -112,6 +112,22 @@ public class RunnableHttpRequests implements Runnable {
     
     public String beautify(String result) {
         result = result.replaceAll("(\\[)|(\\])", "");
+        
+        if (result.length() == 0) {
+            result = "0";
+        }
+        
+        // checking for non integer results to eliminate long results
+        int nonIntCheck = result.indexOf(".");
+        if (nonIntCheck > -1) {
+            result = result.substring(0,(nonIntCheck));
+        }
+        
+        //In the case of a query that returns a data set rather than a metric value
+        if (!result.matches("\\d*")) {
+            result = "0";
+        }
+        
         return result;
     }
     
