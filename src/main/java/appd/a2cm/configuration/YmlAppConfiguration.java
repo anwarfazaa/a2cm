@@ -10,13 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.apache.log4j.Logger;
 
-public class YmlConfiguration {
+public class YmlAppConfiguration {
 
-    static Logger log = Logger.getLogger(YmlConfiguration.class.getName()); 
+    static Logger log = Logger.getLogger(YmlAppConfiguration.class.getName()); 
     
     private ApplicationConfiguration applicationConfiguration;
 
-    public YmlConfiguration(String filePath) {
+    public YmlAppConfiguration(String filePath) {
         Yaml yaml = new Yaml();
         try(InputStream in = Files.newInputStream(Paths.get(filePath))) {
             applicationConfiguration = yaml.loadAs(in , ApplicationConfiguration.class);

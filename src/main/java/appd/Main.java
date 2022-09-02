@@ -3,7 +3,7 @@ package appd;
 import appd.a2cm.Analytics;
 import appd.a2cm.MachineAgentHttpManager;
 import appd.a2cm.configuration.XmlConfiguration;
-import appd.a2cm.configuration.YmlConfiguration;
+import appd.a2cm.configuration.YmlAppConfiguration;
 import appd.a2cm.configuration.YmlMetricsConfiguration;
 
 import javax.xml.bind.JAXBException;
@@ -34,7 +34,7 @@ public class Main {
          BasicConfigurator.configure();
          
          
-        YmlConfiguration applicationConfiguration = new YmlConfiguration(getConfig("app-config.yml"));
+        YmlAppConfiguration applicationConfiguration = new YmlAppConfiguration(getConfig("app-config.yml"));
         YmlMetricsConfiguration ymlMetricsConfiguration = new YmlMetricsConfiguration(getConfig("metrics-config.yml"));
         Analytics analytics = new Analytics(applicationConfiguration.getEventsEndpoint(),applicationConfiguration.getGlobalAccount(),applicationConfiguration.getApiAccessKey());
 

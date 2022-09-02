@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class YmlMetricsConfiguration {
     
-    static Logger log = Logger.getLogger(YmlConfiguration.class.getName()); 
+    static Logger log = Logger.getLogger(YmlAppConfiguration.class.getName()); 
     
     private YmlMetricsConfigurationList ymlMetricsConfigurationList;
     Map<String, Object> data ;
