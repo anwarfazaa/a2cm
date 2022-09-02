@@ -62,7 +62,7 @@ public class Analytics {
         return request (_account, _key, "POST", url, data);
     }
 
-    // Abandond for now
+    // Abandoned for now
     public String query (String queryBody)
     {
         try {
