@@ -1,18 +1,19 @@
 package appd.a2cm;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.json.*;
@@ -20,12 +21,13 @@ import org.json.*;
 
 public class Analytics {
 
-    private boolean _moreData;
-    private SimpleDateFormat _iso8601;
+    //private boolean _moreData;
+    //private SimpleDateFormat _iso8601;
     private String _host;
     private String _account;
     private String _key;
-
+    
+    
     static Logger log = Logger.getLogger(Analytics.class.getName()); 
 
     public Analytics(String _host , String _account , String _key){
@@ -33,9 +35,10 @@ public class Analytics {
         this._account = _account;
         this._key = _key;
     }
-    private static InputStream request(final String account, final String key, final String method, final String url, final String data) throws IOException, NoSuchAlgorithmException {
+    private InputStream request(final String account, final String key, final String method, final String url, final String data) throws IOException, NoSuchAlgorithmException {
         //log(data);
         URL urlRequest = new URL(url);
+        
         final byte postData [] = data.getBytes(StandardCharsets.UTF_8);
         SSLContext sc = SSLContext.getInstance("SSL");
         HttpsURLConnection connection = (HttpsURLConnection) urlRequest.openConnection();
@@ -45,11 +48,11 @@ public class Analytics {
         connection.setRequestProperty ("X-Events-API-Key", key);
         connection.setRequestProperty ("Content-Type", "application/vnd.appd.events+json;v=2");
         connection.setRequestProperty ("Accept", "application/vnd.appd.events+json;v=2");
+        
         connection.setRequestProperty ("charset", "utf-8");
         connection.setRequestProperty ("Content-Length", Integer.toString (postData.length));
         connection.getOutputStream();
         OutputStream out = connection.getOutputStream();
-        //System.out.println(connection.getContent().toString());
         out.write (postData);
         return connection.getInputStream ();
     }
@@ -59,6 +62,7 @@ public class Analytics {
         return request (_account, _key, "POST", url, data);
     }
 
+    // Abandond for now
     public String query (String queryBody)
     {
         try {
@@ -69,15 +73,14 @@ public class Analytics {
         if (result.length() == 0) {
             result = "0";
         }
-        //In the case of a query that returns a data set rather than a metric value
         
-
         // checking for non integer results to eliminate long results
         int nonIntCheck = result.indexOf(".");
         if (nonIntCheck > -1) {
             result = result.substring(0,(nonIntCheck));
         }
         
+        //In the case of a query that returns a data set rather than a metric value
         if (!result.matches("\\d*")) {
             result = "0";
         }
@@ -88,6 +91,16 @@ public class Analytics {
             log.error("Http Request Exception: " + ex);
             return "0";
         }
+    }
+    
+    public JsonArray query(String queryBody, int queryLimit) throws IOException, NoSuchAlgorithmException {   
+            //System.out.println(queryBody);
+            String postUrl = this._host + "/events/query?limit=" + queryLimit;
+            String result = new JSONArray(print(post (postUrl,  queryBody)) ).toString();
+            Gson gson = new Gson();
+            JsonArray obj = gson.fromJson(result, JsonArray.class);
+            //.get(0).getAsJsonObject().getAsJsonArray("results").toString().replaceAll("(\\[)|(\\])", "");
+            return obj;
     }
 
     /*
