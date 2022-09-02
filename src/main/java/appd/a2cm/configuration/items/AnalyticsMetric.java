@@ -37,6 +37,6 @@ public class AnalyticsMetric {
     }
     @Override
     public String toString() {
-        return getName() + ":" + getQuery();
+        return getName() + ":" + getQuery() + ":" + getMetricPath();
     }
 }
