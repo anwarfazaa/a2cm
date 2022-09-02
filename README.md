@@ -22,3 +22,13 @@ To provide Appdynamics queries , config.xml must be updated with required querie
 </metric-list>
 ```
 
+When writing an Appdynamics query, some characters need to be escaped due to XML requirements as in the below list:
+```
+"   &quot;
+'   &apos;
+<   &lt;
+>   &gt;
+&   &amp;
+```
+
+
