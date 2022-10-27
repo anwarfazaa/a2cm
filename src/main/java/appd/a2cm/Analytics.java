@@ -2,7 +2,6 @@ package appd.a2cm;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -11,9 +10,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.json.*;
@@ -68,7 +64,7 @@ public class Analytics {
         try {
         String postUrl = this._host + "/events/query";
         String result = new JSONArray(print(post (postUrl,  queryBody)) ).getJSONObject(0).get("results").toString().replaceAll("(\\[)|(\\])", "");
-        //log.debug("Http Request result: " + result);
+        log.debug("Http Request result: " + result);
         //In the case of an empty string , we need to return 0 as metric value.
         if (result.length() == 0) {
             result = "0";
@@ -89,18 +85,25 @@ public class Analytics {
         
         } catch (Exception ex) {
             log.error("Http Request Exception: " + ex);
+            log.error(ex.getStackTrace().toString());
             return "0";
         }
     }
     
-    public JsonArray query(String queryBody, int queryLimit) throws IOException, NoSuchAlgorithmException {   
+    public JsonArray query(String queryBody, int queryLimit) throws IOException, NoSuchAlgorithmException { 
+        JsonArray obj = new JsonArray();
+        try {
             //System.out.println(queryBody);
             String postUrl = this._host + "/events/query?limit=" + queryLimit;
             String result = new JSONArray(print(post (postUrl,  queryBody)) ).toString();
             Gson gson = new Gson();
-            JsonArray obj = gson.fromJson(result, JsonArray.class);
+            obj = gson.fromJson(result, JsonArray.class);
             //.get(0).getAsJsonObject().getAsJsonArray("results").toString().replaceAll("(\\[)|(\\])", "");
             return obj;
+        } catch (Exception ex) {
+            log.error("Error at : " + queryBody );
+            return obj;
+        }
     }
 
     /*
